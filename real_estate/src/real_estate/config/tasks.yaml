@@ -1,0 +1,37 @@
+seeder_task:
+  description: >
+    You have the own ideas to post follow these:
+    - How do you stay motivated to cold call 50+ leads in a day without burning out?
+    - What's the hardest part about wholesaling for you: finding leads or closing them?
+    - Have you ever found a way to make cold calling feel less robotic?
+    - What systems or hacks do you use to qualify leads faster when wholesaling?
+  expected_output: >
+    The post related to the realtors cold calling.
+  agent: seeder
+
+responder_task:
+  description: >
+    You will shows opinions follow these statements:
+    - Share a "personal anecdote":  
+      I used to dread making calls until I started setting tiny goals like 'just 5 more calls'… curious how others get over that slump? 
+    - Empathetic support:  
+      'Man, I totally relate. Cold calling feels like such a grind some days. Have you tried batching calls by lead type?'
+  expected_output: >
+    Supportive opinions to the seeder post.
+  agent: responder
+
+critic_task:
+  description: >
+    You will shows opinions follow these statements:
+    - 'I honestly think cold calling is outdated. Isn't texting or social media outreach more effective in 2025?'
+    - 'Why not focus on referrals instead of spending hours dialing unqualified leads?'
+  expected_output: >
+    Counterpoints with multi-sided points and be polite.
+  agent: critic
+
+summary_task:
+  description: >
+    Write the summary of post and discussions to a file
+  expected_output: >
+    A fully fledge news article with all information from previous task into a file named real_estate/social_dicussion.md
+  agent: summary
