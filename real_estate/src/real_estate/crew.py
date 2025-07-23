@@ -2,10 +2,13 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
-from crewai_tools import SerperDevTool, ScrapeWebsiteTool, FileWriterTool
 from dotenv import load_dotenv
 
 load_dotenv()
+# If you want to run a snippet of code before or after the crew starts,
+# you can use the @before_kickoff and @after_kickoff decorators
+# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
 @CrewBase
 class RealEstate():
     """RealEstate crew"""
@@ -13,69 +16,39 @@ class RealEstate():
     agents = 'config/agents.yaml'
     tasks = 'config/tasks.yaml'
 
-    @agent
-    def seeder(self) -> Agent:
-        return Agent(
-            config=self.agents_config['seeder'],
-            tools=[SerperDevTool()],
-            verbose=True
-        )
-
-    @agent
-    def responder(self) -> Agent:
-        return Agent(
-            config=self.agents_config['responder'],
-            tools=[],
-            verbose=True
-        )
-
-    @agent
-    def critic(self) -> Agent:
-        return Agent(
-            config=self.agents_config['critic'],
-            tools=[SerperDevTool()],
-            verbose=True
-        )
+    # Learn more about YAML configuration files here:
+    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
+    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
     
+    # If you would like to add tools to your agents, you can learn more about it here:
+    # https://docs.crewai.com/concepts/agents#agent-tools
     @agent
-    def summary(self) -> Agent:
+    def seeder_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config['summary'],
-            tools=[FileWriterTool()],
+            config=self.agents_config['seeder_agent'], # type: ignore[index]
             verbose=True
         )
 
+    # To learn more about structured task outputs,
+    # task dependencies, and task callbacks, check out the documentation:
+    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
     @task
     def seeder_task(self) -> Task:
         return Task(
-            config=self.tasks_config['seeder_task'],
-        )
-
-    @task
-    def responder_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['responder_task'],
-        )
-    
-    @task
-    def critic_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['critic_task'],
-        )
-    
-    @task
-    def summary_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['summary_task'],
+            config=self.tasks_config['seeder_task'], # type: ignore[index]
+            output_file='post.md'
         )
 
     @crew
     def crew(self) -> Crew:
         """Creates the RealEstate crew"""
+        # To learn how to add knowledge sources to your crew, check out the documentation:
+        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
 
         return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
+            agents=self.agents, # Automatically created by the @agent decorator
+            tasks=self.tasks, # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
+            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
         )
